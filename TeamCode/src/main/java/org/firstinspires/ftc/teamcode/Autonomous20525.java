@@ -12,8 +12,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  *                                                                      *
  ***********************************************************************/
 
+
+
+
+
+
 @TeleOp(name = "M20525_Autonomous)")
 public class Autonomous20525 extends LinearOpMode {
+
+    SimplifiedOdometryRobot robot = new SimplifiedOdometryRobot(this);
     DcMotor backLeft;
     DcMotor backRight;
     DcMotor frontLeft;

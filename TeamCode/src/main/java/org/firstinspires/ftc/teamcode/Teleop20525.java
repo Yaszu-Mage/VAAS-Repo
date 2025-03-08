@@ -138,35 +138,42 @@ public class Teleop20525 extends LinearOpMode {
 
                 if (gamepad1.start) {
                     if (arise_state == 0) {
-                        RightAscent.setPosition(1);
+                        Tilt.setTargetPosition(1200);
+                        Tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        Tilt.setPower(1);
                         sleep(1000);
+                        LeftLift.setTargetPosition(3000);
+                        RightLift.setTargetPosition(3000);
+                        LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        LeftLift.setPower(1);
+                        RightLift.setPower(1);
                         arise_state = 1;
                         dash_telemetry.addLine("Ascent 1");
                     } else if (arise_state == 1) {
-                        RightAscent.setPosition(0);
-                        RightAscent.getController().pwmDisable();
-                        WinchElevator.setTargetPosition(1250);
-                        WinchElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        WinchElevator.setPower(1);
+                        LeftLift.setTargetPosition(3000);
+                        RightLift.setTargetPosition(3000);
+                        LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        LeftLift.setPower(1);
+                        RightLift.setPower(1);
+
+                        LeftLift.setPower(1);
+                        RightLift.setPower(1);
                         sleep(1000);
                         arise_state = 2;
                     } else if (arise_state == 2) {
-                            LeftHClaw.setPosition(1);
-                            RightHClaw.setPosition(1);
-                            LeftSlide.setPosition(1);
-                            RightSlide.setPosition(1);
-                            Tilt.setTargetPosition(955);
-                            LeftLift.setTargetPosition(2660);
-                            RightLift.setTargetPosition(2660);
-                            LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            Tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            Tilt.setPower(1);
-                            LeftLift.setPower(1);
-                            RightLift.setPower(1);
+                        LeftHClaw.setPosition(1);
+                        RightHClaw.setPosition(1);
+                        LeftLift.setTargetPosition(0);
+                        RightLift.setTargetPosition(0);
+                        LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             sleep(1000);
                             arise_state = 3;
                         } else if (arise_state == 3) {
+                            LeftHClaw.setPosition(1);
+                            RightHClaw.setPosition(1);
                             LeftLift.setTargetPosition(0);
                             RightLift.setTargetPosition(0);
                             LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -229,7 +236,6 @@ public class Teleop20525 extends LinearOpMode {
                 }
                 if (gamepad1.right_trigger >= 0.1 && LeftLift.getCurrentPosition() <= 4800) {
                     int New_Value = LeftLift.getCurrentPosition() + 150;
-                    can_move = false;
                     LeftLift.setTargetPosition(New_Value);
                     RightLift.setTargetPosition(New_Value);
                     LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
