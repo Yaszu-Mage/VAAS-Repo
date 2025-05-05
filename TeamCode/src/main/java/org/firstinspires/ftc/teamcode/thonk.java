@@ -10,13 +10,12 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import java.util.List;
 
-@Autonomous(name = "Thonk")
+@Autonomous(name = "M-Autotest1")
 public class thonk extends LinearOpMode {
-    DcMotor backRight, frontRight, backLeft, frontLeft,axial,lateral,LeftLift,RightLift;
-    SimplifiedOdometryRobot robot = new SimplifiedOdometryRobot(this);
-    RevBlinkinLedDriver lights;
+    DcMotor backRight, frontRight, backLeft, frontLeft,LeftLift,RightLift;
+    EssentialMecanumRobot robot = new EssentialMecanumRobot(this);
     HuskyLens lens;
-
+    Integer state = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -25,66 +24,28 @@ public class thonk extends LinearOpMode {
         }
 
         //Attaching the variables declared with the physical motors by name or id
+        robot.initialize(true);
         {
-            lights = hardwareMap.get(RevBlinkinLedDriver.class, "lights");
             frontLeft = hardwareMap.dcMotor.get("frontLeft");
             backLeft = hardwareMap.dcMotor.get("backLeft");
             frontRight = hardwareMap.dcMotor.get("frontRight");
             backRight = hardwareMap.dcMotor.get("backRight");
             LeftLift = hardwareMap.dcMotor.get("LeftLift");
             RightLift = hardwareMap.dcMotor.get("RightLift");
-            axial = hardwareMap.dcMotor.get("axial");
-            lateral = hardwareMap.dcMotor.get("lateral");
             frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
             backRight.setDirection(DcMotorSimple.Direction.FORWARD);
             frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         }
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_RED);
+        waitForStart();
         while (opModeIsActive()) {
             // Move to bar
-            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            robot.drive(24,1,1);
-            robot.strafe(24,-1,1);
-            robot.drive(24,1,1);
-            LeftLift.setTargetPosition(3600);
-            RightLift.setTargetPosition(3600);
-            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GOLD);
-            LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            LeftLift.setPower(1);
-            RightLift.setPower(1);
-            sleep(1000);
-            lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-            //put lift up
-            LeftLift.setTargetPosition(0);
-            RightLift.setTargetPosition(0);
-            LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            LeftLift.setPower(-1);
-            RightLift.setPower(-1);
-            LeftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            RightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //put lift down
-            //do the block thing
-            robot.drive(12,-1,1);
-            robot.strafe(36,1,1);
-            robot.drive(36,1,1);
-            robot.strafe(12,1,1);
-            robot.drive(36,-1,5);
-            robot.drive(36,1,5);
-            robot.strafe(12,1,1);
-            robot.drive(36,-1,5);
-            robot.drive(36,1,5);
-            robot.strafe(12,1,1);
-            robot.drive(36,-1,5);
-            //Move lift back down
-            LeftLift.setTargetPosition(0);
-            RightLift.setTargetPosition(0);
-            LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            LeftLift.setPower(-1);
-            RightLift.setPower(-1);
+            if (state == 0) {
+                robot.drive(20, 1, 0.1);
+                robot.strafe(20, -1, 0.1);
+                telemetry.addData("State", state);
+            }
+            telemetry.addData("State", state);
             telemetry.update();
         }
     }

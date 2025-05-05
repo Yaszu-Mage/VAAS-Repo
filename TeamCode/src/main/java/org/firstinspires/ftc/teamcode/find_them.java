@@ -13,7 +13,7 @@ import java.util.List;
 @Autonomous(name = "Find Them.")
 public class find_them extends LinearOpMode {
     DcMotor backRight, frontRight, backLeft, frontLeft,axial,lateral,LeftLift,RightLift;
-    SimplifiedOdometryRobot robot = new SimplifiedOdometryRobot(this);
+    EssentialMecanumRobot robot = new EssentialMecanumRobot(this);
     RevBlinkinLedDriver lights;
     HuskyLens lens;
     @Override

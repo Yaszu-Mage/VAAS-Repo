@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.yahoo_api.Phone;
+import org.firstinspires.ftc.teamcode.yahoo_api.YahAPI;
 
 import java.util.HashMap;
 
@@ -22,6 +24,8 @@ public class Teleop20525 extends LinearOpMode {
     private final long cooldownTime = 1000;
 
     private DcMotor backRight;
+    YahAPI yahAPI = new YahAPI(gamepad1);
+    
     private boolean ry = false;
     private boolean low_claw_open = false;
     private boolean high_claw_open = false;
@@ -44,6 +48,7 @@ public class Teleop20525 extends LinearOpMode {
     private Servo HighClaw;
     private boolean can_move = true;
     private Servo Wrist;
+    Phone phone = new Phone(telemetry,dash_telemetry);
 
     /**
      * This sample contains the bare minimum Blocks for any regular OpMode. The 3 blue
@@ -109,7 +114,7 @@ public class Teleop20525 extends LinearOpMode {
             // Put run blocks here.
             while (opModeIsActive()) {
                 // Put loop blocks here.
-                dash_telemetry.addData("x",LeftLift.getCurrentPosition());
+                phone.print("x",LeftLift.getCurrentPosition());
                 forward = gamepad1.left_stick_y;
                 strafe = gamepad1.left_stick_x;
                 turn = gamepad1.right_stick_x;
@@ -149,7 +154,7 @@ public class Teleop20525 extends LinearOpMode {
                         LeftLift.setPower(1);
                         RightLift.setPower(1);
                         arise_state = 1;
-                        dash_telemetry.addLine("Ascent 1");
+                        phone.add_line("Ascent 1");
                     } else if (arise_state == 1) {
                         LeftLift.setTargetPosition(3000);
                         RightLift.setTargetPosition(3000);
@@ -181,7 +186,7 @@ public class Teleop20525 extends LinearOpMode {
                             LeftLift.setPower(0);
                             RightLift.setPower(0);
                         }
-                    telemetry.addData("State", arise_state);
+                    phone.print("State", arise_state);
                 }
 
                 if (gamepad2.a && !gamepad2.b) {
@@ -242,9 +247,9 @@ public class Teleop20525 extends LinearOpMode {
                     RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     LeftLift.setPower(gamepad1.right_trigger);
                     RightLift.setPower(gamepad1.right_trigger);
-                    telemetry.addLine("up");
-                    telemetry.addData("New Value", New_Value);
-                    telemetry.addData("Armliftpower", LeftLift.getPower());
+                    phone.addLine("up");
+                    phone.print("New Value", New_Value);
+                    phone.print("Armliftpower", LeftLift.getPower());
                 } else {
                     if (arise_state == 0 && !(gamepad1.left_trigger >= 0.1) && !ry) {
                         LeftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -253,11 +258,11 @@ public class Teleop20525 extends LinearOpMode {
                         RightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         RightLift.setTargetPosition(RightLift.getCurrentPosition());
                         LeftLift.setTargetPosition(LeftLift.getCurrentPosition());
-                        telemetry.addData("BusyLeft", LeftLift.isBusy());
-                        telemetry.addData("BusyRight", RightLift.isBusy());
+                        phone.print("BusyLeft", LeftLift.isBusy());
+                        phone.print("BusyRight", RightLift.isBusy());
                         LeftLift.setPower(0);
                         RightLift.setPower(0);
-                        telemetry.addLine("off");
+                        phone.addLine("off");
                     }
                 }
                 if (gamepad1.left_trigger >= 0.1 && LeftLift.getCurrentPosition() >= 0) {
@@ -269,8 +274,8 @@ public class Teleop20525 extends LinearOpMode {
                     RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     LeftLift.setPower(gamepad1.left_trigger);
                     RightLift.setPower(gamepad1.left_trigger);
-                    telemetry.addLine("down");
-                    telemetry.addData("New Value", New_Value);
+                    phone.addLine("down");
+                    phone.print("New Value", New_Value);
                 } else {
                     if (arise_state == 0 && !(gamepad1.right_trigger >= 0.1) && !ry) {
                         LeftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -279,11 +284,10 @@ public class Teleop20525 extends LinearOpMode {
                         RightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                         RightLift.setTargetPosition(RightLift.getCurrentPosition());
                         LeftLift.setTargetPosition(LeftLift.getCurrentPosition());
-                        telemetry.addData("BusyLeft", LeftLift.isBusy());
-                        telemetry.addData("BusyRight", RightLift.isBusy());
+                        phone.print("BusyLeft", LeftLift.isBusy());
+                        phone.print("BusyRight", RightLift.isBusy());
                         LeftLift.setPower(0);
                         RightLift.setPower(0);
-                        telemetry.addLine("off");
                     }
                 }
                 if (gamepad2.back) {
@@ -337,18 +341,18 @@ public class Teleop20525 extends LinearOpMode {
                     decrease_height();
                 }
                 dashboard.sendTelemetryPacket(packet);
-                telemetry.addData("Left Lift", LeftLift.getCurrentPosition());
-                telemetry.addData("Right Lift", RightLift.getCurrentPosition());
+                phone.print("Left Lift", LeftLift.getCurrentPosition());
+                phone.print("Right Lift", RightLift.getCurrentPosition());
+                phone.print("Current Position Winch Elevator", WinchElevator.getCurrentPosition());
+                phone.print("Current Position Left Arm", LeftLift.getCurrentPosition());
+                phone.print("Current Position Witch", WinchElevator.getCurrentPosition());
+                phone.print("Current Position Right Arm", RightLift.getCurrentPosition());
+                phone.print("Current Left Slide Position", LeftSlide.getPosition());
+                phone.print("Current Right Slide Position", RightSlide.getPosition());
+                phone.print("Current position tilt", Tilt.getCurrentPosition());
                 telemetry.update();
                 dash_telemetry.update();
                 dash_telemetry.update();
-                dash_telemetry.addData("Current Position Winch Elevator", WinchElevator.getCurrentPosition());
-                dash_telemetry.addData("Current Position Left Arm", LeftLift.getCurrentPosition());
-                dash_telemetry.addData("Current Position Witch", WinchElevator.getCurrentPosition());
-                dash_telemetry.addData("Current Position Right Arm", RightLift.getCurrentPosition());
-                dash_telemetry.addData("Current Left Slide Position", LeftSlide.getPosition());
-                dash_telemetry.addData("Current Right Slide Position", RightSlide.getPosition());
-                dash_telemetry.addData("Current position tilt", Tilt.getCurrentPosition());
             }
         }
     }
@@ -365,12 +369,12 @@ public void move_low_claw() {
     if (low_claw_open) {
         LowClaw.setPosition(0);
         cooldowns.put(HighClaw, currentTimeMillis());
-        telemetry.addData("Low Claw", LowClaw.getPosition());
+        phone.print("Low Claw", LowClaw.getPosition());
         low_claw_open = false;
     } else if (!low_claw_open){
         LowClaw.setPosition(0.5);
         cooldowns.put(HighClaw, currentTimeMillis());
-        telemetry.addData("Low Claw", LowClaw.getPosition());
+        phone.print("Low Claw", LowClaw.getPosition());
         low_claw_open = true;
     }
 
@@ -388,12 +392,12 @@ public void move_low_claw() {
         if (high_claw_open) {
             HighClaw.setPosition(0.3);
             cooldowns.put(HighClaw, currentTimeMillis());
-            telemetry.addData("High Claw", HighClaw.getPosition());
+            phone.print("High Claw", HighClaw.getPosition());
             high_claw_open = false;
         } else if (!high_claw_open){
             HighClaw.setPosition(0.65);
             cooldowns.put(HighClaw, currentTimeMillis());
-            telemetry.addData("High Claw", HighClaw.getPosition());
+            phone.print("High Claw", HighClaw.getPosition());
             high_claw_open = true;
         }
     }
@@ -442,5 +446,8 @@ public void move_low_claw() {
         LeftLift.setPower(1);
         RightLift.setPower(1);
     }
+
+
+
 }
 
