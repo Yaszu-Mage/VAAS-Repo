@@ -6,6 +6,7 @@ import static java.lang.System.currentTimeMillis;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.yahoo_api.Phone;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@TeleOp(name = "Teleop Rewrite 20525 2024-2025",group = "yahoo")
 public class Teleop_Rewrite extends LinearOpMode {
     public boolean ry = false;
     private final HashMap<Servo, Long> cooldowns = new HashMap<>(); // Cooldown storage

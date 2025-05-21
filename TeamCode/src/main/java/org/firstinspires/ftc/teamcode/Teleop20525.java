@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.yahoo_api.YahAPI;
 
 import java.util.HashMap;
 
-@TeleOp(name = "M20525_Teleop")
+@TeleOp(name = "M20525_Teleop",group = "yahoo")
 public class Teleop20525 extends LinearOpMode {
     private final HashMap<Servo, Long> cooldowns = new HashMap<>(); // Cooldown storage
     private final long cooldownTime = 1000;
