@@ -11,14 +11,7 @@ public class GeneratedPath {
         PathBuilder builder = new PathBuilder();
 
         builder
-                .addPath(
-                        // Line 1
-                        new BezierLine(
-                                new Point(0.313, 47.375, Point.CARTESIAN),
-                                new Point(27.362, 80.678, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+
                 .addPath(
                         // Line 2
                         new BezierLine(

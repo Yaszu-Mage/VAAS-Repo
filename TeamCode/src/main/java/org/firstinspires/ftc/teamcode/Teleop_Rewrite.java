@@ -28,8 +28,6 @@ public class Teleop_Rewrite extends LinearOpMode {
     int arise_state;
     float forward,strafe,turn;
     double denominator;
-    gamepad player = new gamepad(gamepad1);
-    gamepad player2 = new gamepad(gamepad2);
 
     public FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dash_telemetry = dashboard.getTelemetry();
@@ -45,13 +43,56 @@ public class Teleop_Rewrite extends LinearOpMode {
             arise();
             move_low_claw();
             baskets();
-            high_claw_move();
+
             lift();
             slide();
+            if (gamepad2.a && !gamepad2.b) {
+                move_low_claw();
+            }
+            if (gamepad2.b && ! gamepad2.a) {
+                move_high_claw();
+            }
+            if (gamepad2.dpad_up) {
+                LeftHClaw.setPosition(1);
+                RightHClaw.setPosition(1);
+                telemetry.addLine("up");
+            }
+            if (gamepad2.dpad_down) {
+                LeftHClaw.setPosition(-1);
+                RightHClaw.setPosition(-1);
+                telemetry.addLine("down");
+            }
+            if(gamepad2.x) {
+                LeftHClaw.setPosition(gamepad2.right_stick_y);
+                RightHClaw.setPosition(gamepad2.right_stick_y);
+            }
             dashboard.sendTelemetryPacket(packet);
         }
     }
+    //Moves high claw up and down
 
+    public void move_high_claw() {
+        sleep(500);
+        if (cooldowns.containsKey(HighClaw)) {
+            long lastUsed = cooldowns.get(HighClaw);
+            long currentTime = currentTimeMillis();
+            long timeLeft = cooldownTime - (currentTime - lastUsed);
+            if (timeLeft > 0) {
+                return;
+            }
+        }
+        if (high_claw_open) {
+            HighClaw.setPosition(0.3);
+            cooldowns.put(HighClaw, currentTimeMillis());
+            phone.print("High Claw", HighClaw.getPosition());
+            high_claw_open = false;
+        } else if (!high_claw_open){
+            HighClaw.setPosition(0.65);
+            cooldowns.put(HighClaw, currentTimeMillis());
+            phone.print("High Claw", HighClaw.getPosition());
+            high_claw_open = true;
+        }
+    }
     public boolean register_motor(DcMotor motor, String motor_name) {
         try {
             motor = hardwareMap.get(DcMotor.class, motor_name);
@@ -61,8 +102,11 @@ public class Teleop_Rewrite extends LinearOpMode {
         return true;
     }
 
+
+    private boolean low_claw_open = false;
+    private boolean high_claw_open = false;
     public void move_low_claw() {
-        if (player2.a && !player2.b) {
+        if (gamepad2.a && !gamepad2.b) {
         sleep(500);
         if (cooldowns.containsKey(LowClaw)) {
             long lastUsed = cooldowns.get(LowClaw);
@@ -72,9 +116,20 @@ public class Teleop_Rewrite extends LinearOpMode {
                 return;
             }
         }
+            if (low_claw_open) {
+                LowClaw.setPosition(0);
+                cooldowns.put(HighClaw, currentTimeMillis());
+                phone.print("Low Claw", LowClaw.getPosition());
+                low_claw_open = false;
+            } else if (!low_claw_open){
+                LowClaw.setPosition(0.5);
+                cooldowns.put(HighClaw, currentTimeMillis());
+                phone.print("Low Claw", LowClaw.getPosition());
+                low_claw_open = true;
+            }
     }}
     public void arise(){
-        if (player.start) {
+        if (gamepad1.start) {
             if (arise_state == 0) {
                 Tilt.setTargetPosition(1200);
                 Tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -123,15 +178,15 @@ public class Teleop_Rewrite extends LinearOpMode {
         phone.print("State: ", arise_state);
     }
     public void movement(){
-        forward = player.left_stick.y;
-        strafe = player.left_stick.x;
-        turn = player.right_stick.x;
+        forward = gamepad1.left_stick_y;
+        strafe = gamepad1.left_stick_x;
+        turn = gamepad1.right_stick_x;
         double highestValue;
 
-        double forwardBackwardValue = player.left_stick.y; //Controls moving forward/backward
-        double leftRightValue = player.left_stick.x * 1.1; //Controls strafing left/right       *the 1.1 multiplier is to counteract any imperfections during the strafing*
-        double turningValue = player.right_stick.x; //Controls turning left/right
-        if (player.left_stick_button) {
+        double forwardBackwardValue = gamepad1.left_stick_y; //Controls moving forward/backward
+        double leftRightValue = gamepad1.left_stick_x * 1.1; //Controls strafing left/right       *the 1.1 multiplier is to counteract any imperfections during the strafing*
+        double turningValue = gamepad1.right_stick_x; //Controls turning left/right
+        if (gamepad1.left_stick_button) {
             forwardBackwardValue /= 2;
             leftRightValue /= 2;
             turningValue /= 2;
@@ -192,7 +247,7 @@ public class Teleop_Rewrite extends LinearOpMode {
     }
 
     public void baskets(){
-        if (player.a) {
+        if (gamepad1.a) {
             // high basket
             ry = true;
             while (LeftLift.getCurrentPosition() < 2701) {
@@ -204,7 +259,7 @@ public class Teleop_Rewrite extends LinearOpMode {
                 RightLift.setPower(1);
             }
             ry = false;
-        } else if (player.b) {
+        } else if (gamepad1.b) {
 
             // HIGH CHAMBER (specimen)
             ry = true;
@@ -217,7 +272,7 @@ public class Teleop_Rewrite extends LinearOpMode {
                 RightLift.setPower(1);
             } ry = false;}
 
-        if (player.x) {
+        if (gamepad1.x) {
             // Reset
             ry = true;
             while (LeftLift.getCurrentPosition() > 0) {
@@ -231,17 +286,6 @@ public class Teleop_Rewrite extends LinearOpMode {
             ry = false;}
     }
 
-    public void high_claw_move() {
-        if (gamepad2.right_stick_y >= 0.1 && gamepad2.right_stick_button) {
-            LeftHClaw.setPosition(gamepad2.right_stick_y);
-            RightHClaw.setPosition(gamepad2.right_stick_y);
-        } else if (gamepad2.right_stick_y <= -0.1) {
-            double value = abs(gamepad2.right_stick_y);
-            value = 1 - value;
-            LeftHClaw.setPosition(value);
-            RightHClaw.setPosition(value);
-        }
-    }
 
     public void lift() {
         // just going to use old controller here for simplicity
