@@ -32,6 +32,7 @@ public class Teleop_Rewrite extends LinearOpMode {
     public FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dash_telemetry = dashboard.getTelemetry();
     Phone phone = new Phone(telemetry,dash_telemetry);
+
     @Override
     public void runOpMode() throws InterruptedException {
         TelemetryPacket packet = new TelemetryPacket();
