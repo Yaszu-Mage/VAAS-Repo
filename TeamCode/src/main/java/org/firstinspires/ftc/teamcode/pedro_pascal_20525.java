@@ -108,10 +108,9 @@ public class pedro_pascal_20525 extends OpMode {
         telemetryA.addLine("auto time! please fasten your seatbelts");
         telemetryA.update();
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
-        follower.setStartingPose(new Pose(0.3127035830618892,47.37459283387623,0));
-
-
-    }
+        follower.setStartingPose(new Pose(6.925, 48.157,0));
+        follower.setMaxPower(0.8);
+         }
 
 
 
@@ -119,28 +118,35 @@ public class pedro_pascal_20525 extends OpMode {
           * This runs the OpMode, updating the Follower as well as printing out the debug statements to
           * the Telemetry, as well as the FTC Dashboard.
           */
-        public boolean liftup = true;
-        public boolean liftdown = false;
 
         @Override
         public void loop() {
             follower.update();
             LeftSlide.setPosition(0);
             RightSlide.setPosition(0);
+            if (point == 2 && RightLift.getCurrentPosition() <= 2000) {
+                HighClaw.setPosition(0.3);
+                LeftHClaw.setPosition(0);
+                RightHClaw.setPosition(0);
+            }else {
+                LeftHClaw.setPosition(0.2);
+                RightHClaw.setPosition(0.2);
+                HighClaw.setPosition(0.65);
+            }
             if (!follower.isBusy()) {
-                if (point == 0) {
+                if (point == 1) {
+
                     timer.reset();
                     timer.startTime();
                     if (timer.seconds() <= 2) {
-                        follower.breakFollowing();
-                        point = 1;
+                        point = 2;
                     }
                     while (timer.seconds() <= 2) {
                         follower.followPath(path0());
                     }
 
-                } else if (point == 1) {
-                    follower.followPath(path0());
+
+                } else if (point == 0) {
                     RightLift.setTargetPosition(2701);
                     LeftLift.setTargetPosition(2701);
                     RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -153,11 +159,12 @@ public class pedro_pascal_20525 extends OpMode {
                         LeftLift.setPower(1);
                     }
                     if (RightLift.getCurrentPosition() >= 2400) {
-                        point = 2;
+                        point = 1;
                     }
                 } else if (point == 2) {
                     RightLift.setTargetPosition(0);
                     LeftLift.setTargetPosition(0);
+                    telemetryA.addData("Baller", RightLift.getCurrentPosition());
                     RightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     LeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     timer.reset();
@@ -170,6 +177,7 @@ public class pedro_pascal_20525 extends OpMode {
                         point = 3;
                     }
                 } else if (point == 3) {
+
                     follower.followPath(path1());
                     point = 4;
                 }
@@ -182,7 +190,16 @@ public class pedro_pascal_20525 extends OpMode {
             }
         }
 
-
+        public PathChain path() {
+            PathBuilder builder = new PathBuilder();
+            builder.addPath(
+                    new BezierLine(
+                            new Point(follower.getPose().getX(),follower.getPose().getY(),Point.CARTESIAN),
+                            new Point(23.134, 79.475, Point.CARTESIAN)
+                    )
+            );
+            return builder.build();
+        }
 
          public PathChain path0() {
              PathBuilder builder = new PathBuilder();
@@ -190,115 +207,101 @@ public class pedro_pascal_20525 extends OpMode {
              builder
                      .addPath(
                              // Line 1
-                             new BezierLine(
-                                     new Point(0.313, 47.375, Point.CARTESIAN),
-                                     new Point(33.651, 75.238, Point.CARTESIAN)
+                             new BezierCurve(
+                                     new Point(1.2590164684858478, 53.19344142225921, Point.CARTESIAN),
+                                     new Point(23.134, 79.475, Point.CARTESIAN),
+                                     new Point(35.882, 78.531, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0));
-             return  builder.build();
+             return builder.build();
          }
          public PathChain path1() {
              PathBuilder builder = new PathBuilder();
 
              builder
                      .addPath(
-                             // Line 1
-                             new BezierLine(
-                                     new Point(0.313, 47.375, Point.CARTESIAN),
-                                     new Point(27.362, 80.678, Point.CARTESIAN)
-                             )
-                     )
-                     .setConstantHeadingInterpolation(Math.toRadians(0))
-                     .addPath(
                              // Line 2
-                             new BezierLine(
-                                     new Point(27.362, 80.678, Point.CARTESIAN),
-                                     new Point(28.456, 47.687, Point.CARTESIAN)
+                             new BezierCurve(
+                                     new Point(23.134, 79.475, Point.CARTESIAN),
+                                     new Point(38.243, 30.689, Point.CARTESIAN),
+                                     new Point(57.915, 39.030, Point.CARTESIAN)
                              )
                      )
-                     .setConstantHeadingInterpolation(Math.toRadians(0))
+                     .setConstantHeadingInterpolation(Math.toRadians(180))
                      .addPath(
                              // Line 3
                              new BezierLine(
-                                     new Point(28.456, 47.687, Point.CARTESIAN),
-                                     new Point(58.476, 38.775, Point.CARTESIAN)
+                                     new Point(57.915, 39.030, Point.CARTESIAN),
+                                     new Point(57.285, 39.502, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0))
                      .addPath(
                              // Line 4
                              new BezierLine(
-                                     new Point(58.476, 38.775, Point.CARTESIAN),
-                                     new Point(57.850, 28.769, Point.CARTESIAN)
+                                     new Point(57.285, 39.502, Point.CARTESIAN),
+                                     new Point(57.600, 33.679, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0))
                      .addPath(
                              // Line 5
                              new BezierLine(
-                                     new Point(57.850, 28.769, Point.CARTESIAN),
-                                     new Point(8.287, 22.827, Point.CARTESIAN)
+                                     new Point(57.600, 33.679, Point.CARTESIAN),
+                                     new Point(21.089, 30.846, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0))
                      .addPath(
                              // Line 6
                              new BezierLine(
-                                     new Point(8.287, 22.827, Point.CARTESIAN),
-                                     new Point(57.537, 24.078, Point.CARTESIAN)
+                                     new Point(21.089, 30.846, Point.CARTESIAN),
+                                     new Point(54.295, 32.892, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0))
                      .addPath(
                              // Line 7
                              new BezierLine(
-                                     new Point(57.537, 24.078, Point.CARTESIAN),
-                                     new Point(57.537, 12.508, Point.CARTESIAN)
+                                     new Point(54.295, 32.892, Point.CARTESIAN),
+                                     new Point(57.285, 28.957, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0))
                      .addPath(
                              // Line 8
                              new BezierLine(
-                                     new Point(57.537, 12.508, Point.CARTESIAN),
-                                     new Point(7.349, 11.414, Point.CARTESIAN)
+                                     new Point(57.285, 28.957, Point.CARTESIAN),
+                                     new Point(19.200, 22.820, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0))
                      .addPath(
                              // Line 9
                              new BezierLine(
-                                     new Point(7.349, 11.414, Point.CARTESIAN),
-                                     new Point(58.319, 9.850, Point.CARTESIAN)
+                                     new Point(19.200, 22.820, Point.CARTESIAN),
+                                     new Point(62.007, 22.348, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0))
                      .addPath(
                              // Line 10
                              new BezierLine(
-                                     new Point(58.319, 9.850, Point.CARTESIAN),
-                                     new Point(58.319, 3.127, Point.CARTESIAN)
+                                     new Point(62.007, 22.348, Point.CARTESIAN),
+                                     new Point(61.849, 7.869, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0))
                      .addPath(
                              // Line 11
                              new BezierLine(
-                                     new Point(58.319, 3.127, Point.CARTESIAN),
-                                     new Point(4.847, 2.345, Point.CARTESIAN)
-                             )
-                     )
-                     .setConstantHeadingInterpolation(Math.toRadians(0))
-                     .addPath(
-                             // Line 12
-                             new BezierLine(
-                                     new Point(4.847, 2.345, Point.CARTESIAN),
-                                     new Point(26.423, 12.039, Point.CARTESIAN)
+                                     new Point(61.849, 7.869, Point.CARTESIAN),
+                                     new Point(17.311, 9.285, Point.CARTESIAN)
                              )
                      )
                      .setConstantHeadingInterpolation(Math.toRadians(0));
-         return builder.build();
+             return builder.build();
          }
 }
 
